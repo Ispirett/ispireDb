@@ -1,0 +1,22 @@
+{
+  "name": "ispireDb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/ispireDb.bundle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
+    "dev": "webpack --watch src --mode development"
+  },
+  "keywords": ["tools", "js", "ts", "database"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dexie": "^2.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^12.7.12",
+    "webpack": "^4.41.1",
+    "webpack-cli": "^3.3.9"
+  }
+}
