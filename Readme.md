@@ -26,7 +26,7 @@ download ispireDb.bundle.js from the dist folder
 
 ### Up and running
 ```
-import IspireDb from "./ispiredb";
+import IspireDb from "ispiredb.js/dist/ispiredb";
 
 ```
 
