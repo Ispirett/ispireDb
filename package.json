@@ -1,6 +1,6 @@
 {
   "name": "ispiredb.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/ispireDb.bundle.js",
   "scripts": {
@@ -8,7 +8,12 @@
     "build": "webpack --mode production",
     "dev": "webpack --watch src --mode development"
   },
-  "keywords": ["tools", "js", "ts", "database"],
+  "keywords": [
+    "tools",
+    "js",
+    "ts",
+    "database"
+  ],
   "author": "ispirett ",
   "license": "ISC",
   "dependencies": {
