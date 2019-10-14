@@ -1,5 +1,5 @@
 {
-  "name": "ispireDb",
+  "name": "ispiredb.js",
   "version": "1.0.0",
   "description": "",
   "main": "dist/ispireDb.bundle.js",
@@ -9,7 +9,7 @@
     "dev": "webpack --watch src --mode development"
   },
   "keywords": ["tools", "js", "ts", "database"],
-  "author": "",
+  "author": "ispirett ",
   "license": "ISC",
   "dependencies": {
     "dexie": "^2.0.4"
