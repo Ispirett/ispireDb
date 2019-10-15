@@ -87,9 +87,9 @@ export default class IspireDb {
     return this._model.model;
   }
 
-  all() {
+  all(callback) {
     this._model.model.toArray().then(object => {
-      return object;
+      callback(object);
     });
   }
 }

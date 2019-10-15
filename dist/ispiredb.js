@@ -77,9 +77,9 @@ var IspireDb = /** @class */ (function () {
     IspireDb.prototype.query = function () {
         return this._model.model;
     };
-    IspireDb.prototype.all = function () {
+    IspireDb.prototype.all = function (callback) {
         this._model.model.toArray().then(function (object) {
-            return object;
+            callback(object);
         });
     };
     return IspireDb;
