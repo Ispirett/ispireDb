@@ -1,75 +1,95 @@
-import Dexie from  'dexie'
+import Dexie from "dexie";
 
-interface Errors{
-    findError(query:string | number)
-    deleteError(error)
-
-}
-class DbErrors implements Errors{
-    findError(query:string | number) {
-        console.error(`${query} does not Exist`)
-    }
-    deleteError(error){
-        console.error(error)
-    }
+interface Errors {
+  findError(query: string | number);
+  deleteError(error);
 }
 
-export default class IspireDb{
-   _todo;
-   _currentTodo;
-    private _errorLogger: Errors;
+class DbErrors implements Errors {
+  findError(query: string | number) {
+    console.info(`${query} does not Exist`);
+  }
+  deleteError(error) {
+    console.error(error);
+  }
+}
+interface IsipreExceptions {
+  _cause: string;
+}
 
-    constructor() {
-        this._errorLogger = new DbErrors()
-    }
+class IspireException implements IsipreExceptions {
+  _cause: string;
 
+  constructor(cause: string) {
+    this._cause = cause;
+  }
+}
 
-    setup(dbName: string, version:number, ...fields: Array<string>){
-        this._todo = new Dexie(dbName);
-        this._todo.version(version).stores({
-            todo: fields.toString()
-        });
-    }
+export default class IspireDb {
+  _model;
+  _currentModel;
+  private _errorLogger: Errors;
 
-    create(details = {}){
-        this._currentTodo = this._todo.todo.put(details);
-    }
+  constructor() {
+    this._errorLogger = new DbErrors();
+  }
 
-    find(query:string |number, data){
-        this._currentTodo.then( () => {
-            return this._todo.todo.get(query)
-        }).
-        then(todo => {
-            try {
-                if (todo === undefined) {
-                  this._errorLogger.findError(query)
-                }
-                else return data(todo);
-            }
-            catch (e) {
+  setup(dbName: string, version: number, ...fields: Array<string>) {
+    this._model = new Dexie(dbName);
+    this._model.version(version).stores({
+      model: fields.toString()
+    });
+  }
 
-            }
+  create(details = {}) {
+    this._currentModel = this._model.model.put(details);
+  }
 
-        }).catch(error =>{
-            console.error('Check your db setup or query');
+  find(query: string | number, data) {
+    this._currentModel
+      .then(() => {
+        return this._model.model.get(query);
+      })
+      .then(model => {
+        try {
+          if (model === undefined) {
+            this._errorLogger.findError(query);
+          } else return data(model);
+        } catch (e) {}
+      })
+      .catch(error => {
+        console.error("Check your db setup or query");
+      });
+  }
 
-        })
-    }
+  update(primaryKey: string | number, details = {}) {
+    this._model.model.update(primaryKey, details);
+  }
 
-    update(primaryKey: string | number, details = {}) {
-      this._todo.todo.update(primaryKey,details)
-    }
+  destroy(primaryKey: string | number) {
+    this._model.model.delete(primaryKey);
+  }
 
-    destroy(primaryKey: string | number){
-        this._todo.todo.delete(primaryKey)
-    }
+  destroyAll(countDown: number = 3000) {
+     let _this = this;
+    setTimeout(function() {
+      if (_this._model.delete()){
+          console.warn("Database Deleted ",new Date());
+          return true;
+      }
+      else  throw new IspireException(
+          "Fail to delete database another process must be in motion please try again"
+        );
+    }, countDown);
+  }
 
+  query() {
+    return this._model.model;
+  }
 
-    all(){
-        this._todo.todo.toArray().
-        then(object =>{
-            console.log(object)
-        })
-    }
-
+  all() {
+    this._model.model.toArray().then(object => {
+      return object;
+    });
+  }
 }

@@ -1,16 +1,22 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var dexie_1 = require("dexie");
 var DbErrors = /** @class */ (function () {
     function DbErrors() {
     }
     DbErrors.prototype.findError = function (query) {
-        console.error(query + " does not Exist");
+        console.info(query + " does not Exist");
     };
     DbErrors.prototype.deleteError = function (error) {
         console.error(error);
     };
     return DbErrors;
+}());
+var IspireException = /** @class */ (function () {
+    function IspireException(cause) {
+        this._cause = cause;
+    }
+    return IspireException;
 }());
 var IspireDb = /** @class */ (function () {
     function IspireDb() {
@@ -21,47 +27,61 @@ var IspireDb = /** @class */ (function () {
         for (var _i = 2; _i < arguments.length; _i++) {
             fields[_i - 2] = arguments[_i];
         }
-        this._todo = new dexie_1.default(dbName);
-        this._todo.version(version).stores({
-            todo: fields.toString()
+        this._model = new dexie_1["default"](dbName);
+        this._model.version(version).stores({
+            model: fields.toString()
         });
     };
     IspireDb.prototype.create = function (details) {
         if (details === void 0) { details = {}; }
-        this._currentTodo = this._todo.todo.put(details);
+        this._currentModel = this._model.model.put(details);
     };
     IspireDb.prototype.find = function (query, data) {
-        var _this = this;
-        this._currentTodo.then(function () {
-            return _this._todo.todo.get(query);
-        }).
-            then(function (todo) {
+        var _this_1 = this;
+        this._currentModel
+            .then(function () {
+            return _this_1._model.model.get(query);
+        })
+            .then(function (model) {
             try {
-                if (todo === undefined) {
-                    _this._errorLogger.findError(query);
+                if (model === undefined) {
+                    _this_1._errorLogger.findError(query);
                 }
                 else
-                    return data(todo);
+                    return data(model);
             }
-            catch (e) {
-            }
-        }).catch(function (error) {
-            console.error('Check your db setup or query');
+            catch (e) { }
+        })["catch"](function (error) {
+            console.error("Check your db setup or query");
         });
     };
     IspireDb.prototype.update = function (primaryKey, details) {
         if (details === void 0) { details = {}; }
-        this._todo.todo.update(primaryKey, details);
+        this._model.model.update(primaryKey, details);
     };
     IspireDb.prototype.destroy = function (primaryKey) {
-        this._todo.todo.delete(primaryKey);
+        this._model.model["delete"](primaryKey);
+    };
+    IspireDb.prototype.destroyAll = function (countDown) {
+        if (countDown === void 0) { countDown = 3000; }
+        var _this = this;
+        setTimeout(function () {
+            if (_this._model["delete"]()) {
+                console.warn("Database Deleted ", new Date());
+                return true;
+            }
+            else
+                throw new IspireException("Fail to delete database another process must be in motion please try again");
+        }, countDown);
+    };
+    IspireDb.prototype.query = function () {
+        return this._model.model;
     };
     IspireDb.prototype.all = function () {
-        this._todo.todo.toArray().
-            then(function (object) {
-            console.log(object);
+        this._model.model.toArray().then(function (object) {
+            return object;
         });
     };
     return IspireDb;
 }());
-exports.default = IspireDb;
+exports["default"] = IspireDb;

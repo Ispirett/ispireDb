@@ -38,7 +38,7 @@ let article = new  IspireDb();
 
 article.setup('todo',1, '++id','title', 'description', 'complete', 'time');
 
-article.create({ title: 'sweet man', description:'just practicing',complete: 'no',time: new Date() });
+article.create({ title: 'sweet', description:'just practicing',complete: 'no',time: new Date() });
 
 article.find(1, data => { console.info(data)}); //=> find object
 
