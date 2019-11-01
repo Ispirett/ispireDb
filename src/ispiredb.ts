@@ -46,20 +46,25 @@ export default class IspireDb {
   }
 
   find(query: string | number, data) {
-    this._currentModel
-      .then(() => {
-        return this._model.model.get(query);
-      })
-      .then(model => {
-        try {
-          if (model === undefined) {
-            this._errorLogger.findError(query);
-          } else return data(model);
-        } catch (e) {}
-      })
-      .catch(error => {
-        console.error("Check your db setup or query");
-      });
+    try {
+      this._currentModel
+          .then(() => {
+            return this._model.model.get(query);
+          })
+          .then(model => {
+            try {
+              if (model === undefined) {
+                // this._errorLogger.findError(query);
+              } else return data(model);
+            } catch (e) {
+            }
+          })
+          .catch(error => {
+            console.error("Check your db setup or query");
+          });
+    }catch (e) {
+
+    }
   }
 
   update(primaryKey: string | number, details = {}) {

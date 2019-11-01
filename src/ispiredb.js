@@ -38,22 +38,27 @@ var IspireDb = /** @class */ (function () {
     };
     IspireDb.prototype.find = function (query, data) {
         var _this_1 = this;
-        this._currentModel
-            .then(function () {
-            return _this_1._model.model.get(query);
-        })
-            .then(function (model) {
-            try {
-                if (model === undefined) {
-                    _this_1._errorLogger.findError(query);
+        try {
+            this._currentModel
+                .then(function () {
+                return _this_1._model.model.get(query);
+            })
+                .then(function (model) {
+                try {
+                    if (model === undefined) {
+                        // this._errorLogger.findError(query);
+                    }
+                    else
+                        return data(model);
                 }
-                else
-                    return data(model);
-            }
-            catch (e) { }
-        })["catch"](function (error) {
-            console.error("Check your db setup or query");
-        });
+                catch (e) {
+                }
+            })["catch"](function (error) {
+                console.error("Check your db setup or query");
+            });
+        }
+        catch (e) {
+        }
     };
     IspireDb.prototype.update = function (primaryKey, details) {
         if (details === void 0) { details = {}; }
